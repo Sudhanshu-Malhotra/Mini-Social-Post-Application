@@ -115,7 +115,19 @@ export default function PostCard({ post, setPosts }) {
     }
   };
 
-      setCommentText(savedCommentText); // Put text back in box
+  const handleDelete = async () => {
+    if (!window.confirm("Are you sure you want to delete this post?")) return;
+
+    // 1. Optimistic UI Update
+    setPosts(prevPosts => prevPosts.filter(p => p._id !== post._id));
+
+    try {
+      await api.delete(`/posts/${post._id}`);
+    } catch (err) {
+      console.error("Delete failed, rolling back", err);
+      alert("Failed to delete post. Please try again.");
+      // 2. Rollback
+      setPosts(prevPosts => [...prevPosts, post].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
     }
   };
 
