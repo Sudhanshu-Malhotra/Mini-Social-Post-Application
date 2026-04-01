@@ -30,8 +30,17 @@ export default function PostCard({ post, setPosts }) {
   const [showHeart, setShowHeart] = useState(false);
   const [likesOpen, setLikesOpen] = useState(false);
 
-  const userId = user?.id || user?._id;
-  const isLiked = Array.isArray(post?.likes) && post.likes.some(like => like.userId?.toString() === userId?.toString());
+  const myId = user?.id || user?._id;
+  const authorId = post?.author?.userId?._id || post?.author?.userId; // Handling both raw and populated
+  
+  const isAuthor = (myId && authorId && myId.toString() === authorId.toString()) || 
+                   (user?.username && post?.author?.username && user.username.toLowerCase() === post.author.username.toLowerCase());
+
+  const isLiked = Array.isArray(post?.likes) && post.likes.some(like => {
+    const likeId = like.userId?._id || like.userId;
+    return likeId?.toString() === myId?.toString();
+  });
+  
   const likeCount = Array.isArray(post?.likes) ? post.likes.length : 0;
   const commentCount = Array.isArray(post?.comments) ? post.comments.length : 0;
 
@@ -142,12 +151,11 @@ export default function PostCard({ post, setPosts }) {
         title={<Typography fontWeight="700" variant="subtitle1">{post?.author?.username || 'Unknown User'}</Typography>}
         subheader={<Typography variant="caption" color="text.secondary">{post?.createdAt ? format(post.createdAt) : 'just now'}</Typography>}
         action={
-          ((userId && post?.author?.userId && (userId.toString() === post.author.userId.toString())) || 
-          (user?.username && post?.author?.username && (user.username === post.author.username))) ? (
+          isAuthor && (
             <IconButton onClick={handleDelete} color="error" size="small">
               <DeleteOutlineIcon fontSize="small" />
             </IconButton>
-          ) : null
+          )
         }
         sx={{ pb: 1 }}
       />
