@@ -16,8 +16,6 @@ import {
 } from '@mui/material';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { format } from 'timeago.js';
 import { AuthContext } from '../context/AuthContext';
 import api from '../services/api';
@@ -115,19 +113,7 @@ export default function PostCard({ post, setPosts }) {
     }
   };
 
-  const handleDelete = async () => {
-    if (!window.confirm("Are you sure you want to delete this post?")) return;
-
-    // 1. Optimistic UI Update
-    setPosts(prevPosts => prevPosts.filter(p => p._id !== post._id));
-
-    try {
-      await api.delete(`/posts/${post._id}`);
-    } catch (err) {
-      console.error("Delete failed, rolling back", err);
-      alert("Failed to delete post. Please try again.");
-      // 2. Rollback (Note: This is basic, might not preserve exact position in feed perfectly depending on sort)
-      setPosts(prevPosts => [...prevPosts, post].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
+      setCommentText(savedCommentText); // Put text back in box
     }
   };
 
@@ -141,14 +127,6 @@ export default function PostCard({ post, setPosts }) {
         }
         title={<Typography fontWeight="700" variant="subtitle1">{post?.author?.username || 'Unknown User'}</Typography>}
         subheader={<Typography variant="caption" color="text.secondary">{post?.createdAt ? format(post.createdAt) : 'just now'}</Typography>}
-        action={
-          (userId && post?.author?.userId && (userId.toString() === post.author.userId.toString())) || 
-          (user?.username && post?.author?.username && (user.username === post.author.username)) ? (
-            <IconButton onClick={handleDelete} color="error" size="small">
-              <DeleteOutlineIcon fontSize="small" />
-            </IconButton>
-          ) : null
-        }
         sx={{ pb: 1 }}
       />
       
@@ -173,7 +151,7 @@ export default function PostCard({ post, setPosts }) {
           >
             <Box 
               component="img"
-              src={post.image.startsWith('http') ? post.image : `${(import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/api$/, '')}${post.image}`}
+              src={`${(import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/api$/, '')}${post.image}`}
               alt="Post image"
               sx={{
                 width: '100%',

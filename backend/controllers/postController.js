@@ -1,15 +1,13 @@
 const Post = require("../models/Post");
-const fs = require("fs");
-const path = require("path");
 
 exports.createPost = async (req, res, next) => {
   try {
     const { text } = req.body;
     
-    // image file from Cloudinary (path contains the URL)
+    // image file from multer
     let imageUrl = "";
     if (req.file) {
-      imageUrl = req.file.path;
+      imageUrl = `/uploads/${req.file.filename}`;
     }
 
     console.log("CreatePost Triggered:", { text, hasImage: !!req.file, userId: req.user.id });
@@ -105,36 +103,6 @@ exports.commentOnPost = async (req, res, next) => {
     await post.save();
 
     res.json({ success: true, data: post.comments });
-  } catch (err) {
-    next(err);
-  }
-};
-
-exports.deletePost = async (req, res, next) => {
-  try {
-    const post = await Post.findById(req.params.id);
-    if (!post) {
-      return res.status(404).json({ success: false, msg: "Post not found" });
-    }
-
-    // Check author
-    if (post.author.userId.toString() !== req.user.id) {
-      return res.status(401).json({ success: false, msg: "Unauthorized: You can only delete your own posts" });
-    }
-
-    // Delete image if exists locally (Legacy support)
-    if (post.image && post.image.startsWith("/uploads/")) {
-      const imagePath = path.join(__dirname, "..", post.image);
-      fs.unlink(imagePath, (err) => {
-        if (err) console.error("Error deleting image file:", err);
-      });
-    }
-    
-    // Note: Deleting from Cloudinary would require extracting the public_id, 
-    // but for now, we'll just remove the DB record for the simplest fix.
-
-    await Post.findByIdAndDelete(req.params.id);
-    res.json({ success: true, msg: "Post removed" });
   } catch (err) {
     next(err);
   }

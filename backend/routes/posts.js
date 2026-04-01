@@ -3,24 +3,16 @@ const router = express.Router();
 const postController = require("../controllers/postController");
 const auth = require("../middleware/auth");
 const multer = require("multer");
-const { CloudinaryStorage } = require("multer-storage-cloudinary");
-const cloudinary = require("cloudinary").v2;
 const path = require("path");
 const { validatePost } = require("../middleware/validate");
 
-// Configure Cloudinary
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-
-// Cloudinary Storage Config
-const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: "task_social_posts",
-    allowed_formats: ["jpg", "png", "jpeg", "gif"],
+// Multer storage config (Back to Local)
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, "../uploads/"));
+  },
+  filename: function (req, file, cb) {
+    cb(null, `${Date.now()}-${file.originalname}`);
   },
 });
 
@@ -55,8 +47,5 @@ router.post("/:id/like", auth, postController.likePost);
 
 // @route   POST api/posts/:id/comment
 router.post("/:id/comment", auth, postController.commentOnPost);
-
-// @route   DELETE api/posts/:id
-router.delete("/:id", auth, postController.deletePost);
 
 module.exports = router;
