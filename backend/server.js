@@ -13,6 +13,9 @@ const postRoutes = require("./routes/posts");
 
 const app = express();
 
+// Health Check for Render
+app.get("/healthz", (req, res) => res.sendStatus(200));
+
 // Security Middlewares
 app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" } // Allow images to serve
