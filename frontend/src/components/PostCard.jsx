@@ -17,6 +17,7 @@ import {
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { format } from 'timeago.js';
 import { AuthContext } from '../context/AuthContext';
 import api from '../services/api';
@@ -114,6 +115,22 @@ export default function PostCard({ post, setPosts }) {
     }
   };
 
+  const handleDelete = async () => {
+    if (!window.confirm("Are you sure you want to delete this post?")) return;
+
+    // 1. Optimistic UI Update
+    setPosts(prevPosts => prevPosts.filter(p => p._id !== post._id));
+
+    try {
+      await api.delete(`/posts/${post._id}`);
+    } catch (err) {
+      console.error("Delete failed, rolling back", err);
+      alert("Failed to delete post. Please try again.");
+      // 2. Rollback (Note: This is basic, might not preserve exact position in feed perfectly depending on sort)
+      setPosts(prevPosts => [...prevPosts, post].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
+    }
+  };
+
   return (
     <Card sx={{ mb: 3, borderRadius: 2, overflow: 'hidden' }}>
       <CardHeader
@@ -124,6 +141,13 @@ export default function PostCard({ post, setPosts }) {
         }
         title={<Typography fontWeight="700" variant="subtitle1">{post?.author?.username || 'Unknown User'}</Typography>}
         subheader={<Typography variant="caption" color="text.secondary">{post?.createdAt ? format(post.createdAt) : 'just now'}</Typography>}
+        action={
+          userId?.toString() === post?.author?.userId?.toString() && (
+            <IconButton onClick={handleDelete} color="error" size="small">
+              <DeleteOutlineIcon fontSize="small" />
+            </IconButton>
+          )
+        }
         sx={{ pb: 1 }}
       />
       

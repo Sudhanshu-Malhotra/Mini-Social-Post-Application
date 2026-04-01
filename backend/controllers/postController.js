@@ -1,4 +1,6 @@
 const Post = require("../models/Post");
+const fs = require("fs");
+const path = require("path");
 
 exports.createPost = async (req, res, next) => {
   try {
@@ -99,6 +101,33 @@ exports.commentOnPost = async (req, res, next) => {
     await post.save();
 
     res.json({ success: true, data: post.comments });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.deletePost = async (req, res, next) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post) {
+      return res.status(404).json({ success: false, msg: "Post not found" });
+    }
+
+    // Check author
+    if (post.author.userId.toString() !== req.user.id) {
+      return res.status(401).json({ success: false, msg: "Unauthorized: You can only delete your own posts" });
+    }
+
+    // Delete image if exists
+    if (post.image) {
+      const imagePath = path.join(__dirname, "..", post.image);
+      fs.unlink(imagePath, (err) => {
+        if (err) console.error("Error deleting image file:", err);
+      });
+    }
+
+    await Post.findByIdAndDelete(req.params.id);
+    res.json({ success: true, msg: "Post removed" });
   } catch (err) {
     next(err);
   }
