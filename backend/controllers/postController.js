@@ -12,8 +12,6 @@ exports.createPost = async (req, res, next) => {
       imageUrl = `/uploads/${req.file.filename}`;
     }
 
-    console.log("CreatePost Triggered:", { text, hasImage: !!req.file, userId: req.user.id });
-
     if (!text && !imageUrl) {
       return res.status(400).json({ msg: "Post must contain either text or image" });
     }
@@ -126,7 +124,7 @@ exports.deletePost = async (req, res, next) => {
     if (post.image && post.image.startsWith("/uploads/")) {
       const imagePath = path.join(__dirname, "..", post.image);
       fs.unlink(imagePath, (err) => {
-        if (err) console.error("Error deleting image file:", err);
+        // Log error if it fails to delete file but continue post deletion
       });
     }
 
