@@ -150,13 +150,6 @@ export default function PostCard({ post, setPosts }) {
         }
         title={<Typography fontWeight="700" variant="subtitle1">{post?.author?.username || 'Unknown User'}</Typography>}
         subheader={<Typography variant="caption" color="text.secondary">{post?.createdAt ? format(post.createdAt) : 'just now'}</Typography>}
-        action={
-          isAuthor && (
-            <IconButton onClick={handleDelete} color="error" size="small">
-              <DeleteOutlineIcon fontSize="small" />
-            </IconButton>
-          )
-        }
         sx={{ pb: 1 }}
       />
       
@@ -252,6 +245,16 @@ export default function PostCard({ post, setPosts }) {
         >
           Comment
         </Button>
+        {isAuthor && (
+          <Button 
+            fullWidth 
+            startIcon={<DeleteOutlineIcon />}
+            onClick={handleDelete}
+            sx={{ color: 'error.main', fontWeight: 600 }}
+          >
+            Delete
+          </Button>
+        )}
       </CardActions>
 
       <LikesModal 

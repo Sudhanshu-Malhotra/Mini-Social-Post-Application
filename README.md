@@ -14,6 +14,10 @@ eds and Instagram, featuring real-time interactions, premium animations, and iro
 ## ✨ Engineering Excellence & Features
 
 ### 📸 Instagram-Classic Interactions
+- 🔐 **JWT Authentication**: Secure login and registration.
+- 📝 **Interactive Feed**: Create posts, like (with double-tap animation), and comment.
+- 🗑️ **Post Deletion**: Delete your own posts with optimistic UI updates.
+- 🖼️ **Local Storage**: Image support using Multer for stability.
 - **Double-Tap to Like**: Seamlessly "heart" any post with a signature pop animation.
 - **Smart Metadata**: "Liked by **User** and **others**" display integrated into the interaction row.
 - **Detailed Likes List**: Clickable metadata to view the full avatar-based list of users who engaged.
