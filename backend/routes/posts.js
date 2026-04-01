@@ -48,4 +48,7 @@ router.post("/:id/like", auth, postController.likePost);
 // @route   POST api/posts/:id/comment
 router.post("/:id/comment", auth, postController.commentOnPost);
 
+// @route   DELETE api/posts/:id
+router.delete("/:id", auth, postController.deletePost);
+
 module.exports = router;

@@ -14,6 +14,8 @@ import {
   Divider,
   Zoom,
 } from '@mui/material';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { format } from 'timeago.js';
@@ -127,6 +129,14 @@ export default function PostCard({ post, setPosts }) {
         }
         title={<Typography fontWeight="700" variant="subtitle1">{post?.author?.username || 'Unknown User'}</Typography>}
         subheader={<Typography variant="caption" color="text.secondary">{post?.createdAt ? format(post.createdAt) : 'just now'}</Typography>}
+        action={
+          ((userId && post?.author?.userId && (userId.toString() === post.author.userId.toString())) || 
+          (user?.username && post?.author?.username && (user.username === post.author.username))) ? (
+            <IconButton onClick={handleDelete} color="error" size="small">
+              <DeleteOutlineIcon fontSize="small" />
+            </IconButton>
+          ) : null
+        }
         sx={{ pb: 1 }}
       />
       
