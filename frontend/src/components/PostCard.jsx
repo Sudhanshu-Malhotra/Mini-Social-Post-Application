@@ -142,7 +142,7 @@ export default function PostCard({ post, setPosts }) {
         title={<Typography fontWeight="700" variant="subtitle1">{post?.author?.username || 'Unknown User'}</Typography>}
         subheader={<Typography variant="caption" color="text.secondary">{post?.createdAt ? format(post.createdAt) : 'just now'}</Typography>}
         action={
-          userId?.toString() === post?.author?.userId?.toString() && (
+          (userId && post?.author?.userId) && userId.toString() === post.author.userId.toString() && (
             <IconButton onClick={handleDelete} color="error" size="small">
               <DeleteOutlineIcon fontSize="small" />
             </IconButton>

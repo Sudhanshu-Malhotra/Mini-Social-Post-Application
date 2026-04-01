@@ -23,6 +23,8 @@ exports.createPost = async (req, res, next) => {
       },
       text,
       image: imageUrl,
+      likes: [],
+      comments: [],
     });
 
     const post = await newPost.save();

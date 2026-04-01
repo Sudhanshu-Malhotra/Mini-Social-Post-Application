@@ -21,34 +21,40 @@ const postSchema = new mongoose.Schema(
     image: {
       type: String,
     },
-    likes: [
-      {
-        userId: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "User",
+    likes: {
+      type: [
+        {
+          userId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+          },
+          username: String,
         },
-        username: String,
-      },
-    ],
-    comments: [
-      {
-        userId: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "User",
+      ],
+      default: [],
+    },
+    comments: {
+      type: [
+        {
+          userId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+          },
+          username: String,
+          text: {
+            type: String,
+            required: true,
+            trim: true,
+            maxlength: 300,
+          },
+          createdAt: {
+            type: Date,
+            default: Date.now,
+          },
         },
-        username: String,
-        text: {
-          type: String,
-          required: true,
-          trim: true,
-          maxlength: 300,
-        },
-        createdAt: {
-          type: Date,
-          default: Date.now,
-        },
-      },
-    ],
+      ],
+      default: [],
+    },
   },
   { timestamps: true }
 );
