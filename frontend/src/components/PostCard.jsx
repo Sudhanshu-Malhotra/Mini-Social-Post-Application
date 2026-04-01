@@ -172,7 +172,7 @@ export default function PostCard({ post, setPosts }) {
           >
             <Box 
               component="img"
-              src={`${(import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/api$/, '')}${post.image}`}
+              src={post.image.startsWith('http') ? post.image : `${(import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/api$/, '')}${post.image}`}
               alt="Post image"
               sx={{
                 width: '100%',

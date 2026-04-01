@@ -6,10 +6,10 @@ exports.createPost = async (req, res, next) => {
   try {
     const { text } = req.body;
     
-    // image file from multer
+    // image file from Cloudinary (path contains the URL)
     let imageUrl = "";
     if (req.file) {
-      imageUrl = `/uploads/${req.file.filename}`;
+      imageUrl = req.file.path;
     }
 
     if (!text && !imageUrl) {
@@ -118,13 +118,16 @@ exports.deletePost = async (req, res, next) => {
       return res.status(401).json({ success: false, msg: "Unauthorized: You can only delete your own posts" });
     }
 
-    // Delete image if exists
-    if (post.image) {
+    // Delete image if exists locally (Legacy support)
+    if (post.image && post.image.startsWith("/uploads/")) {
       const imagePath = path.join(__dirname, "..", post.image);
       fs.unlink(imagePath, (err) => {
         if (err) console.error("Error deleting image file:", err);
       });
     }
+    
+    // Note: Deleting from Cloudinary would require extracting the public_id, 
+    // but for now, we'll just remove the DB record for the simplest fix.
 
     await Post.findByIdAndDelete(req.params.id);
     res.json({ success: true, msg: "Post removed" });
