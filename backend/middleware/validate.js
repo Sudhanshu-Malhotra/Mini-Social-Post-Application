@@ -28,7 +28,12 @@ exports.validatePost = [
   }),
   (req, res, next) => {
     const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(400).json({ success: false, errors: errors.array() });
+    if (!errors.isEmpty()) {
+      console.log("Validation Errors:", errors.array());
+      console.log("Body arrived:", req.body);
+      console.log("File arrived:", req.file ? "Yes" : "No");
+      return res.status(400).json({ success: false, errors: errors.array() });
+    }
     next();
   }
 ];

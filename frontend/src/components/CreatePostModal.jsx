@@ -63,9 +63,7 @@ export default function CreatePostModal({ open, handleClose, onPostCreated }) {
     if (image) formData.append('image', image);
 
     try {
-      const res = await api.post('/posts', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
+      const res = await api.post('/posts', formData);
       if (res.data.success) {
         onPostCreated(res.data.data);
       } else {

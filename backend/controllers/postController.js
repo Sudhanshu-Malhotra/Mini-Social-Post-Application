@@ -12,6 +12,8 @@ exports.createPost = async (req, res, next) => {
       imageUrl = req.file.path;
     }
 
+    console.log("CreatePost Triggered:", { text, hasImage: !!req.file, userId: req.user.id });
+
     if (!text && !imageUrl) {
       return res.status(400).json({ msg: "Post must contain either text or image" });
     }
